@@ -40,7 +40,9 @@ app.post("/dustbinlevel", (req, res, next) => {
   }
 
   console.log("Request.body", req.body)
-
+  res.send({
+    "message": "Successfully saved"
+  })
 });
 
 
