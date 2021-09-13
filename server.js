@@ -38,7 +38,7 @@ app.post("/dustbinlevel", (req, res, next) => {
     );
     return;
   }
-
+  // TODO: save data to firebase database
   console.log("Request.body", req.body)
   res.send({
     "message": "Successfully saved"
