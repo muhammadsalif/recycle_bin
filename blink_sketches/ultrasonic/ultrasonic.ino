@@ -17,7 +17,7 @@ void setup() {
   pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
   pinMode(echoPin, INPUT); // Sets the echoPin as an Input
 
-  WiFi.begin("TP-Link_3C50", "Mits6641");
+  WiFi.begin("techno", "12345678");
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.println("...");
@@ -64,9 +64,9 @@ void loop() {
 
     HTTPClient http;
 
-    //    http.begin("https://abc.herokuapp.com/dustbinlevel");  //Specify destination for HTTP request
+    http.begin("https://trash-recycling.herokuapp.com/dustbinlevel");  //Specify destination for HTTP request
 
-    http.begin("http://192.168.0.104:5000/dustbinlevel");  //Specify destination for HTTP request
+    //    http.begin("http://192.168.43.192:5000/dustbinlevel");  //Specify destination for HTTP request
 
     //    http.addHeader("Content-Type", "text/plain");             //Specify content-type header
     //   int httpResponseCode = http.POST("request body in text formate");   //Send the actual POST request
