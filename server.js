@@ -10,7 +10,12 @@ var server = http.createServer(app);
 const cookieParser = require("cookie-parser");
 // var jwt = require("jsonwebtoken");
 const PORT = process.env.PORT || 5000;
-var SERVER_SECRET = process.env.SERVER_SECRET || "1234"
+var SERVER_SECRET = process.env.SERVER_SECRET || "1234";
+var mongoose = require("mongoose");
+var {
+  dustbinModel,
+  dustbinReadingReadingModel
+} = require("./database/models");
 
 app.use(express.json());
 
