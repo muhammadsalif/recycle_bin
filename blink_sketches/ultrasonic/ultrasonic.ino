@@ -17,7 +17,7 @@ void setup() {
   pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
   pinMode(echoPin, INPUT); // Sets the echoPin as an Input
 
-  WiFi.begin("techno", "12345678");
+  WiFi.begin("Cisco", "HHSSg103g103");
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.println("...");
@@ -46,19 +46,14 @@ void loop() {
   Serial.print("Duration: ");
   Serial.println(duration);
 
-
-
   // Calculating the distance
   distance = duration * 0.034 / 2;
-
 
   // Prints the distance on the Serial Monitor
   Serial.print("Distance cm: ");
   Serial.println(distance);
 
-
   //Sending data to server
-
 
   if (WiFi.status() == WL_CONNECTED) { //Check WiFi connection status
 
@@ -74,7 +69,7 @@ void loop() {
     http.addHeader("Content-Type", "application/json");             //Specify content-type header
 
     String Sdistance = String(distance);
-    int httpResponseCode = http.POST("{ \"dustbinId\" :  \"611e3ea04209765530fae5c4\" , \"distance\" : " + Sdistance + " ,  \"unit\" : \"cm\" }"); //Send the actual POST request
+    int httpResponseCode = http.POST("{ \"dustbinId\" :  \"614b86b4c70fcb41a5b7eca8\" , \"dustbinLevel\" : " + Sdistance + " ,  \"unit\" : \"cm\" }"); //Send the actual POST request
 
     if (httpResponseCode > 0) {
 

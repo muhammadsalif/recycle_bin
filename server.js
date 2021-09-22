@@ -126,6 +126,85 @@ app.post("/dustbin", (req, res, next) => {
 
 });
 
+// dustbin readings
+app.get("/dustbinreadings", (req, res, next) => {
+  if (!req.query.dustbinId) {
+    res
+      .status(400)
+      .send({
+        errorMessage: "provide dustbinId in query params to get dustbins readings",
+      });
+    console.log("dustbinId is missing");
+    return;
+  }
+  if (
+    !mongoose.isValidObjectId(req.query.dustbinId)
+  ) {
+    res.status(404)
+      .send(`dustbinId is not valid, must be a single String of 12 bytes or a string of 24 hex characters
+    Eg:{
+      "dustbinId": 41224d776a326fb40f000001
+    }`);
+    console.log("dustbinId is not valid");
+    return;
+  }
+
+  // Checking if dustbin exists or not
+  dustbinModel.find({ _id: req.query.dustbinId }, (err, data) => {
+    if (!err) {
+      if (data.length) {
+        //dustbin found
+
+        // Checking if dustbin exits or not
+        dustbinModel
+          .findOne({ _id: req.query.dustbinId })
+          .exec((err, dustbin) => {
+            if (!err) {
+              // Checking if dustbin exits or not
+              if (dustbin) {
+                // dustbin found
+                dustbinReadingModel
+                  .find({
+                    dustbinId: req.query.dustbinId,
+                  })
+                  .sort({ _id: -1 })
+                  .exec((err, dustbinReading) => {
+                    if (!err) {
+                      console.log(dustbinReading, "dustbinReading found");
+                      res.send(dustbinReading);
+                    } else {
+                      console.log("Internal server error", err);
+                      res.status(500).send("Internal server error, " + err);
+                    }
+                  });
+              } else {
+                res.status(400).send({
+                  noDataMessage: "dustbin not found please create first",
+                });
+                console.log("dustbin not found", dustbin);
+                return;
+              }
+            } else {
+              console.log(err);
+              res.status(500).send("Internal server error");
+              return;
+            }
+          });
+      } else {
+        res.status(400).send({
+          noDataMessage: "dustbin not found create first",
+        });
+        console.log("dustbin not found create first ", data);
+        return;
+      }
+    } else {
+      res.status(500).send(`Internal server Error`);
+      console.log("Internal server Error", err);
+      return;
+    }
+  });
+});
+
 // Server listening ////////////////////////////////////////////////////////////
 server.listen(PORT, () => {
   console.log("Server is Running:", PORT);
