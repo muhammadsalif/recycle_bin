@@ -42,28 +42,43 @@ app.post("/dustbinlevel", (req, res, next) => {
     );
     return;
   }
-  console.log("Request.body", req.body)
+  // console.log("Request.body", req.body)
 
-  let newDustbinReadingModel = new dustbinReadingModel({
-    dustbinId: req.body.dustbinId,
-    dustbinLevel: req.body.dustbinLevel,
-    unit: req.body.unit,
-  });
+  dustbinModel
+    .findOne({ _id: req.body.dustbinId })
+    .exec((err, dustbin) => {
+      if (!err) {
+        // Checking if dustbin exits or not
+        if (dustbin) {
 
-  newDustbinReadingModel.save((err, data) => {
-    if (!err) {
-      res.send("Water Level is saved");
-      console.log("Water Level is saved:", data);
-      // Implementation of runtime reading of sensor || distance
-      io.emit(req.body.tankId, { event: "ADDED_ITEM", data: data });
-    } else {
-      res.status(500).send("Internal server error");
-      console.log("Internal server error:", err);
-    }
-  });
+          let newDustbinReadingModel = new dustbinReadingModel({
+            dustbinId: req.body.dustbinId,
+            dustbinLevel: req.body.dustbinLevel,
+            unit: req.body.unit,
+          });
 
-  // TODO: save data to firebase database
-
+          newDustbinReadingModel.save((err, data) => {
+            if (!err) {
+              res.send("dustbin level is saved");
+              console.log("dustbin level is saved:", data);
+            } else {
+              res.status(500).send("Internal server error");
+              console.log("Internal server error:", err);
+            }
+          });
+        } else {
+          res.status(400).send({
+            noDataMessage: "dustbin not found please create first",
+          });
+          console.log("dustbin not found", dustbin);
+          return;
+        }
+      } else {
+        console.log(err);
+        res.status(500).send("Internal server error");
+        return;
+      }
+    });
 });
 
 // create dustbin
