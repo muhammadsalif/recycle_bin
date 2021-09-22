@@ -46,9 +46,9 @@ var dustbinReadingSchema = new mongoose.Schema({
     unit: { type: String },
     createdOn: { type: Date, default: Date.now },
 });
-var dustbinReadingReadingModel = mongoose.model("dustbinreading", dustbinReadingSchema);
+var dustbinReadingModel = mongoose.model("dustbinreading", dustbinReadingSchema);
 
 module.exports = {
     dustbinModel,
-    dustbinReadingReadingModel
+    dustbinReadingModel
 }

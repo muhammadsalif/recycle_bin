@@ -14,7 +14,7 @@ var SERVER_SECRET = process.env.SERVER_SECRET || "1234";
 var mongoose = require("mongoose");
 var {
   dustbinModel,
-  dustbinReadingReadingModel
+  dustbinReadingModel
 } = require("./database/models");
 
 app.use(express.json());
@@ -44,6 +44,16 @@ app.post("/dustbinlevel", (req, res, next) => {
   }
   // console.log("Request.body", req.body)
 
+  if (!mongoose.isValidObjectId(req.body.dustbinId)) {
+    res.status(404)
+      .send(`dustbinId is not valid, must be a single String of 12 bytes or a string of 24 hex characters
+      Eg:{
+        "dustbinId":"41224d776a326fb40f000001",
+    }`);
+    console.log("dustbinId is not valid");
+    return;
+  }
+
   dustbinModel
     .findOne({ _id: req.body.dustbinId })
     .exec((err, dustbin) => {
@@ -59,7 +69,9 @@ app.post("/dustbinlevel", (req, res, next) => {
 
           newDustbinReadingModel.save((err, data) => {
             if (!err) {
-              res.send("dustbin level is saved");
+              res.send({
+                message: "dustbin level is saved"
+              });
               console.log("dustbin level is saved:", data);
             } else {
               res.status(500).send("Internal server error");
