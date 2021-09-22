@@ -29,27 +29,75 @@ app.use(morgan("dev"));
 app.use(cors());
 app.use(cookieParser());
 
-
-// Post tank water level readings
+// dustbin level readings
 app.post("/dustbinlevel", (req, res, next) => {
-  if (!req.body.dustbinId || !req.body.distance || !req.body.unit) {
+  if (!req.body.dustbinId || !req.body.dustbinLevel || !req.body.unit) {
     res.status(400).send(
       `Information missing
         For Eg:{
-          "dustbinId":"515313215315165",
-          "distance":"20",
-          "unit":"cm"
+          "dustbinId":"dustbinId"
+          "dustbinLevel":"dustbinLevel"
+          "unit":"unit"  
         }`,
     );
     return;
   }
-  // TODO: save data to firebase database
   console.log("Request.body", req.body)
-  res.send({
-    "message": "Successfully saved"
-  })
+
+  let newDustbinReadingModel = new dustbinReadingModel({
+    dustbinId: req.body.dustbinId,
+    dustbinLevel: req.body.dustbinLevel,
+    unit: req.body.unit,
+  });
+
+  newDustbinReadingModel.save((err, data) => {
+    if (!err) {
+      res.send("Water Level is saved");
+      console.log("Water Level is saved:", data);
+      // Implementation of runtime reading of sensor || distance
+      io.emit(req.body.tankId, { event: "ADDED_ITEM", data: data });
+    } else {
+      res.status(500).send("Internal server error");
+      console.log("Internal server error:", err);
+    }
+  });
+
+  // TODO: save data to firebase database
+
 });
 
+// create dustbin
+app.post("/dustbin", (req, res, next) => {
+  if (!req.body.dustbinName) {
+    res.status(400).send(
+      `atleast dustbinName is required
+      For Eg:{
+        "dustbinName":"Abc"
+      }`,
+    );
+    console.log("atleast dustbinName is required");
+    return;
+  }
+
+  //Create dustbin here
+  let newDustbinModel = new dustbinModel({
+    dustbinName: req.body.dustbinName,
+  });
+  newDustbinModel.save((err, data) => {
+    if (!err) {
+      console.log("Dustbin created successfully");
+      res.send({
+        message: "Dustbin created successfully"
+      })
+      return;
+    } else {
+      res.status(500).send("Internal server error");
+      console.log("Internal server error:", err);
+      return;
+    }
+  });
+
+});
 
 // Server listening ////////////////////////////////////////////////////////////
 server.listen(PORT, () => {

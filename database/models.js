@@ -34,17 +34,15 @@ process.on('SIGINT', function () {  //this function will run jst before app is c
 
 // dustbins
 var dustbinSchema = new mongoose.Schema({
-    homeId: { type: mongoose.Schema.Types.ObjectId, ref: 'home' },
-    tankName: { type: String },
+    dustbinName: { type: String },
     createdOn: { type: Date, default: Date.now },
 });
 var dustbinModel = mongoose.model("dustbin", dustbinSchema);
 
 // dustbin Readings
 var dustbinReadingSchema = new mongoose.Schema({
-    tankId: { type: mongoose.Schema.Types.ObjectId, ref: 'dustbin' },
-    tankName: { type: String },
-    waterLevel: { type: Number },
+    dustbinId: { type: mongoose.Schema.Types.ObjectId, ref: 'dustbin' },
+    dustbinLevel: { type: Number },
     unit: { type: String },
     createdOn: { type: Date, default: Date.now },
 });
